@@ -8,5 +8,5 @@ Added Features:
 [ ] Custom adapter for list view
 [ ] Support priority
 [ ] Use ViewModel + LiveData
-[ ] ButterKnife to easier view binding
+[ ] ButterKnife to easier view binding Commit: 389766de710a750975d3e5e3fa360b9ed4c3cca9
 [ ] Uses constraint layout

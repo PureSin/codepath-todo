@@ -19,24 +19,27 @@ import com.kelvinhanma.todo.data.Task;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends Activity {
     private List<String> items = new ArrayList<>();
-
     private ListAdapter itemsAdapter;
-
-    private EditText myEditText;
-    private Button myAddButton;
-    private ListView myListView;
     private AppDatabase myAppDb;
+
+    @BindView(R.id.eNewItem)
+    EditText myEditText;
+    @BindView(R.id.btnAddItem)
+    Button myAddButton;
+    @BindView(R.id.lvlItems)
+    ListView myListView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        myEditText = findViewById(R.id.eNewItem);
-        myAddButton = findViewById(R.id.btnAddItem);
-        myListView = findViewById(R.id.lvlItems);
+        ButterKnife.bind(this);
 
         myAppDb = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "todo").build();

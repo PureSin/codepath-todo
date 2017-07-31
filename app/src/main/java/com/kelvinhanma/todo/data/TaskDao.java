@@ -18,7 +18,10 @@ public interface TaskDao {
 
     @Query("SELECT * FROM task WHERE name=:taskName")
     Task findByName(String taskName);
-    
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insertTask(Task task);
+
+    @Query("DELETE FROM task WHERE uid=:id")
+    void deleteTaskById(long id);
 }

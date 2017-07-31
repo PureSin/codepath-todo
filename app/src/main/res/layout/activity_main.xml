@@ -12,10 +12,12 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:text="Name"
-        tools:layout_editor_absoluteX="16dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
+        android:hint="Task Name"
+        app:layout_constraintTop_toTopOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="8dp" />
 
     <Button
         android:id="@+id/btnAddItem"
@@ -23,14 +25,11 @@
         android:layout_height="wrap_content"
         android:text="Add Item"
         android:onClick="onAddItem"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toTopOf="@+id/guideline"
         app:layout_constraintStart_toEndOf="@+id/eNewItem"
         android:layout_marginStart="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="10dp" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/eNewItem" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
@@ -45,8 +44,10 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="-8dp">
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="8dp">
 
     </ListView>
 

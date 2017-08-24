@@ -5,11 +5,12 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.kelvinhanma.todo.data.AppDatabase;
@@ -25,19 +26,20 @@ public class MainActivity extends Activity {
     public static final int EDIT_TASK_REQUEST = 1;
     public static final String TASK_KEY = "task";
     private List<Task> myTasks = new ArrayList<>();
-    private TaskAdapter itemsAdapter;
     private AppDatabase myAppDb;
+
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @BindView(R.id.eNewItem)
     EditText myEditText;
     @BindView(R.id.btnAddItem)
     Button myAddButton;
     @BindView(R.id.lvlItems)
-    ListView myListView;
+    RecyclerView myRecyclerView;
     private Context myContext;
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -45,8 +47,14 @@ public class MainActivity extends Activity {
         myContext = this;
         myAppDb = getDB(myContext);
 
-        itemsAdapter = new TaskAdapter(this, myTasks);
-        myListView.setAdapter(itemsAdapter);
+
+        myRecyclerView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        myRecyclerView.setLayoutManager(mLayoutManager);
+
+        mAdapter = new TaskAdapter(this, myTasks);
+        myRecyclerView.setAdapter(mAdapter);
         setupListViewListener();
 
         loadTasks();
@@ -61,37 +69,32 @@ public class MainActivity extends Activity {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                myTasks = myAppDb.getTaskDao().getTasks();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        itemsAdapter.setTasks(myTasks);
-                        myListView.invalidate();
-                    }
-                });
+                myTasks.clear();
+                myTasks.addAll(myAppDb.getTaskDao().getTasks());
+                System.out.println("Tasks size: " + myTasks.size());
             }
         }).start();
     }
 
     private void setupListViewListener() {
-        myListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                myAppDb.getTaskDao().deleteTaskById(id);
-                myTasks.remove(pos);
-                itemsAdapter.notify();
-                return true;
-            }
-        });
-
-        myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-                Intent i = new Intent(myContext, EditActivity.class);
-                i.putExtra(TASK_KEY, (String) myListView.getItemAtPosition(pos));
-                startActivityForResult(i, EDIT_TASK_REQUEST);
-            }
-        });
+//        myRecyclerView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
+//                myAppDb.getTaskDao().deleteTaskById(id);
+//                myTasks.remove(pos);
+//                itemsAdapter.notify();
+//                return true;
+//            }
+//        });
+//
+//        myRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+//                Intent i = new Intent(myContext, EditActivity.class);
+//                i.putExtra(TASK_KEY, (String) myRecyclerView.getItemAtPosition(pos));
+//                startActivityForResult(i, EDIT_TASK_REQUEST);
+//            }
+//        });
     }
 
     @Override
@@ -122,13 +125,15 @@ public class MainActivity extends Activity {
                     });
                     return;
                 }
-                myAppDb.getTaskDao().insertTask(new Task(0, taskName));
-                loadTasks();
+                Task newTask = new Task(0, taskName);
+                myAppDb.getTaskDao().insertTask(newTask);
+                myTasks.add(newTask);
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         myEditText.setText("");
+                        mAdapter.notifyItemInserted(myTasks.size());
                     }
                 });
             }

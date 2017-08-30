@@ -1,21 +1,32 @@
 package com.kelvinhanma.todo;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.kelvinhanma.todo.data.AppDatabase;
 import com.kelvinhanma.todo.data.Task;
 
 import java.util.List;
+
+import static android.support.v4.content.ContextCompat.startActivity;
 
 /**
  * Created by kelvinhanma on 8/15/17.
  */
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
+    public static final int EDIT_TASK_REQUEST = 1;
+    public static final String TASK_KEY = "task";
+
     private final List<Task> myTasks;
+    private final TaskAdapter myAdapter;
+    private AppDatabase myAppDb;
     private final Context myContext;
 
     // Provide a reference to the views for each data item
@@ -24,6 +35,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         public TextView mTextView;
+
         public ViewHolder(ViewGroup v) {
             super(v);
             mTextView = (TextView) v.findViewById(R.id.textView);
@@ -31,9 +43,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public TaskAdapter(Context context, List<Task> tasks) {
+    public TaskAdapter(Context context, List<Task> tasks, AppDatabase appDb) {
         myContext = context;
         myTasks = tasks;
+        myAppDb = appDb;
+        myAdapter = this;
     }
 
     // Create new views (invoked by the layout manager)
@@ -50,10 +64,33 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.mTextView.setText(myTasks.get(position).getName());
+        final Task task = myTasks.get(position);
+        holder.mTextView.setText(task.getName());
+        holder.mTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(myContext, EditActivity.class);
+                i.putExtra(TASK_KEY, task.getUid());
+                startActivity(myContext, i, null);
+            }
+        });
+        holder.mTextView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        myAppDb.getTaskDao().deleteTaskById(task.getUid());
+                    }
+                }).start();
+                myTasks.remove(position);
+                myAdapter.notifyItemRemoved(position);
+                return true;
+            }
+        });
 
     }
 

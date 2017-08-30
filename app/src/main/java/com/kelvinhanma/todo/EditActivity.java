@@ -7,13 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.kelvinhanma.todo.data.AppDatabase;
-import com.kelvinhanma.todo.data.Task;
-
 import butterknife.BindView;
-
-import static com.kelvinhanma.todo.MainActivity.TASK_KEY;
-import static com.kelvinhanma.todo.MainActivity.getDB;
+import butterknife.ButterKnife;
 
 public class EditActivity extends Activity {
     @BindView(R.id.eTaskName)
@@ -25,13 +20,13 @@ public class EditActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
-
+        ButterKnife.bind(this);
         Intent i = getIntent();
-        if (!i.hasExtra(TASK_KEY)) {
+        if (!i.hasExtra(TaskAdapter.TASK_KEY)) {
             // TODO
         }
 
-        String name = i.getStringExtra(TASK_KEY);
+        String name = i.getStringExtra(TaskAdapter.TASK_KEY);
 
         myEditText.setText(name);
     }
@@ -39,7 +34,7 @@ public class EditActivity extends Activity {
     public void onSaveItem(View view) {
         // TODO handle empty
         Intent i = new Intent();
-        i.putExtra(MainActivity.TASK_KEY, myEditText.getText());
-        setResult(MainActivity.EDIT_TASK_REQUEST, i);
+        i.putExtra(TaskAdapter.TASK_KEY, myEditText.getText());
+        setResult(TaskAdapter.EDIT_TASK_REQUEST, i);
     }
 }

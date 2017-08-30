@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -23,8 +22,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends Activity {
-    public static final int EDIT_TASK_REQUEST = 1;
-    public static final String TASK_KEY = "task";
     private List<Task> myTasks = new ArrayList<>();
     private AppDatabase myAppDb;
 
@@ -53,9 +50,8 @@ public class MainActivity extends Activity {
         mLayoutManager = new LinearLayoutManager(this);
         myRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new TaskAdapter(this, myTasks);
+        mAdapter = new TaskAdapter(this, myTasks, myAppDb);
         myRecyclerView.setAdapter(mAdapter);
-        setupListViewListener();
 
         loadTasks();
     }
@@ -74,27 +70,6 @@ public class MainActivity extends Activity {
                 System.out.println("Tasks size: " + myTasks.size());
             }
         }).start();
-    }
-
-    private void setupListViewListener() {
-//        myRecyclerView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long id) {
-//                myAppDb.getTaskDao().deleteTaskById(id);
-//                myTasks.remove(pos);
-//                itemsAdapter.notify();
-//                return true;
-//            }
-//        });
-//
-//        myRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
-//                Intent i = new Intent(myContext, EditActivity.class);
-//                i.putExtra(TASK_KEY, (String) myRecyclerView.getItemAtPosition(pos));
-//                startActivityForResult(i, EDIT_TASK_REQUEST);
-//            }
-//        });
     }
 
     @Override

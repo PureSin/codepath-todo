@@ -73,7 +73,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(myContext, EditActivity.class);
-                i.putExtra(TASK_KEY, task.getUid());
+                i.putExtra(TASK_KEY, task);
                 startActivity(myContext, i, null);
             }
         });

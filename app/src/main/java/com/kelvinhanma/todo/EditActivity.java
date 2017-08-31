@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.kelvinhanma.todo.data.Task;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -26,9 +28,9 @@ public class EditActivity extends Activity {
             // TODO
         }
 
-        String name = i.getStringExtra(TaskAdapter.TASK_KEY);
+        Task task = i.getParcelableExtra(TaskAdapter.TASK_KEY);
 
-        myEditText.setText(name);
+        myEditText.setText(task.getName());
     }
 
     public void onSaveItem(View view) {

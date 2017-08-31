@@ -20,7 +20,7 @@
         android:id="@+id/btnEditItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Item"
+        android:text="Save Changes"
         android:onClick="onSaveItem"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@+id/eNewItem"

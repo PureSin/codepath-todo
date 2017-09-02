@@ -23,6 +23,7 @@ import static android.support.v4.content.ContextCompat.startActivity;
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     public static final int EDIT_TASK_REQUEST = 1;
     public static final String TASK_KEY = "task";
+    public static final String POSITION = "position";
 
     private final List<Task> myTasks;
     private final TaskAdapter myAdapter;
@@ -74,7 +75,8 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
             public void onClick(View v) {
                 Intent i = new Intent(myContext, EditActivity.class);
                 i.putExtra(TASK_KEY, task);
-                startActivity(myContext, i, null);
+                i.putExtra(POSITION, position);
+                ((Activity) myContext).startActivityForResult(i, EDIT_TASK_REQUEST);
             }
         });
         holder.mTextView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -94,7 +96,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
 
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return myTasks.size();

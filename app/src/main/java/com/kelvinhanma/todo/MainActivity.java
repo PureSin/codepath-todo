@@ -25,7 +25,7 @@ public class MainActivity extends Activity {
     private List<Task> myTasks = new ArrayList<>();
     private AppDatabase myAppDb;
 
-    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.Adapter myAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     @BindView(R.id.eNewItem)
@@ -50,8 +50,8 @@ public class MainActivity extends Activity {
         mLayoutManager = new LinearLayoutManager(this);
         myRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new TaskAdapter(this, myTasks, myAppDb);
-        myRecyclerView.setAdapter(mAdapter);
+        myAdapter = new TaskAdapter(this, myTasks, myAppDb);
+        myRecyclerView.setAdapter(myAdapter);
 
         loadTasks();
     }
@@ -67,19 +67,22 @@ public class MainActivity extends Activity {
             public void run() {
                 myTasks.clear();
                 myTasks.addAll(myAppDb.getTaskDao().getTasks());
-                System.out.println("Tasks size: " + myTasks.size());
             }
         }).start();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != Activity.RESULT_OK) {
-            // TODO
+        if (resultCode != RESULT_OK) return;
+
+        if (requestCode == TaskAdapter.EDIT_TASK_REQUEST) {
+            Task task = data.getParcelableExtra(TaskAdapter.TASK_KEY);
+            int position = data.getIntExtra(TaskAdapter.POSITION, -1);
+            assert(position != -1);
+
+            myTasks.set(position, task);
+            myAdapter.notifyItemChanged(position);
         }
-
-        // update Task
-
     }
 
     public void onAddItem(View v) {
@@ -108,7 +111,7 @@ public class MainActivity extends Activity {
                     @Override
                     public void run() {
                         myEditText.setText("");
-                        mAdapter.notifyItemInserted(myTasks.size());
+                        myAdapter.notifyItemInserted(myTasks.size());
                     }
                 });
             }

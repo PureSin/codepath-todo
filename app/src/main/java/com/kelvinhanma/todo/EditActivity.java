@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.kelvinhanma.todo.data.Task;
 
@@ -17,6 +18,8 @@ public class EditActivity extends Activity {
     EditText myEditText;
     @BindView(R.id.btnEditItem)
     Button mySaveButton;
+    private Task myTask;
+    private int myPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,19 +27,24 @@ public class EditActivity extends Activity {
         setContentView(R.layout.activity_edit);
         ButterKnife.bind(this);
         Intent i = getIntent();
-        if (!i.hasExtra(TaskAdapter.TASK_KEY)) {
-            // TODO
-        }
-
-        Task task = i.getParcelableExtra(TaskAdapter.TASK_KEY);
-
-        myEditText.setText(task.getName());
+        assert i.hasExtra(TaskAdapter.TASK_KEY);
+        myPosition = i.getIntExtra(TaskAdapter.POSITION, -1);
+        assert myPosition != -1;
+        myTask = i.getParcelableExtra(TaskAdapter.TASK_KEY);
+        myEditText.setText(myTask.getName());
     }
 
     public void onSaveItem(View view) {
-        // TODO handle empty
+        String name = myEditText.getText().toString();
+        if (name.isEmpty()) {
+            Toast.makeText(this, "Task name cannot be empty.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        myTask.setName(name);
         Intent i = new Intent();
-        i.putExtra(TaskAdapter.TASK_KEY, myEditText.getText());
-        setResult(TaskAdapter.EDIT_TASK_REQUEST, i);
+        i.putExtra(TaskAdapter.TASK_KEY, myTask);
+        i.putExtra(TaskAdapter.POSITION, myPosition);
+        setResult(RESULT_OK, i);
+        finish();
     }
 }

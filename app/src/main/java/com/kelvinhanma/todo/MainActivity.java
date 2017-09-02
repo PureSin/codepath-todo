@@ -78,7 +78,7 @@ public class MainActivity extends Activity {
         if (requestCode == TaskAdapter.EDIT_TASK_REQUEST) {
             Task task = data.getParcelableExtra(TaskAdapter.TASK_KEY);
             int position = data.getIntExtra(TaskAdapter.POSITION, -1);
-            assert(position != -1);
+            assert (position != -1);
 
             myTasks.set(position, task);
             myAdapter.notifyItemChanged(position);

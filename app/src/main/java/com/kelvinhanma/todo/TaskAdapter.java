@@ -1,7 +1,9 @@
 package com.kelvinhanma.todo;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,8 +15,6 @@ import com.kelvinhanma.todo.data.AppDatabase;
 import com.kelvinhanma.todo.data.Task;
 
 import java.util.List;
-
-import static android.support.v4.content.ContextCompat.startActivity;
 
 /**
  * Created by kelvinhanma on 8/15/17.
@@ -33,13 +33,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
         public TextView mTextView;
 
         public ViewHolder(ViewGroup v) {
             super(v);
             mTextView = (TextView) v.findViewById(R.id.textView);
+            v.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+
         }
     }
 
@@ -82,14 +88,28 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         holder.mTextView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        myAppDb.getTaskDao().deleteTaskById(task.getUid());
+                AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
+                builder.setMessage("Are you sure you want to delete task: " + task.getName())
+                        .setTitle("Confirm Delete");
+                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                myAppDb.getTaskDao().deleteTaskById(task.getUid());
+                            }
+                        }).start();
+                        myTasks.remove(position);
+                        myAdapter.notifyItemRemoved(position);
                     }
-                }).start();
-                myTasks.remove(position);
-                myAdapter.notifyItemRemoved(position);
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User cancelled the dialog
+                        return;
+                    }
+                });
+                builder.create().show();
                 return true;
             }
         });

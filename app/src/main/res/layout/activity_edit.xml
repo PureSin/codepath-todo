@@ -27,12 +27,39 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="10dp"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="textAutoComplete"
         android:text="Name"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"
         tools:layout_editor_absoluteY="47dp"
         android:layout_marginLeft="16dp" />
+
+    <EditText
+        android:id="@+id/editDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textAutoComplete"
+        android:text="Desc"
+        tools:layout_editor_absoluteY="90dp"
+        tools:layout_editor_absoluteX="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="13dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/eTaskName" />
+
+    <Spinner
+        android:id="@+id/editPriority"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:text="Desc"
+        tools:layout_editor_absoluteY="147dp"
+        tools:layout_editor_absoluteX="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="17dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/editDesc" />
 
     <Button
         android:id="@+id/btnEditItem"

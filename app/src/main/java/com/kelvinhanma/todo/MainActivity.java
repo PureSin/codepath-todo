@@ -8,8 +8,11 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.kelvinhanma.todo.data.AppDatabase;
@@ -21,7 +24,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements AdapterView.OnItemSelectedListener {
     private List<Task> myTasks = new ArrayList<>();
     private AppDatabase myAppDb;
 
@@ -34,7 +37,11 @@ public class MainActivity extends Activity {
     Button myAddButton;
     @BindView(R.id.lvlItems)
     RecyclerView myRecyclerView;
+    @BindView(R.id.prioritySpinner)
+    Spinner myPrioritySpinner;
+
     private Context myContext;
+    private Task.Priority mySelectedPriority = Task.Priority.NORMAL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +60,11 @@ public class MainActivity extends Activity {
         myAdapter = new TaskAdapter(this, myTasks, myAppDb);
         myRecyclerView.setAdapter(myAdapter);
 
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.priority_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        myPrioritySpinner.setAdapter(adapter);
+        myPrioritySpinner.setOnItemSelectedListener(this);
         loadTasks();
     }
 
@@ -103,7 +115,7 @@ public class MainActivity extends Activity {
                     });
                     return;
                 }
-                Task newTask = new Task(0, taskName);
+                Task newTask = new Task(0, taskName, mySelectedPriority);
                 myAppDb.getTaskDao().insertTask(newTask);
                 myTasks.add(newTask);
 
@@ -111,10 +123,21 @@ public class MainActivity extends Activity {
                     @Override
                     public void run() {
                         myEditText.setText("");
+                        myPrioritySpinner.setSelection(0);
                         myAdapter.notifyItemInserted(myTasks.size());
                     }
                 });
             }
         }).start();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+        mySelectedPriority = Task.Priority.valueOf(parent.getItemAtPosition(pos).toString().toUpperCase());
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 }

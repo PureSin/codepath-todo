@@ -33,18 +33,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        // each data item is just a string in this case
-        public TextView mTextView;
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        private final TextView mNameView;
+        private final TextView mPriorityView;
 
         public ViewHolder(ViewGroup v) {
             super(v);
-            mTextView = (TextView) v.findViewById(R.id.textView);
-            v.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
+            mNameView = (TextView) v.findViewById(R.id.name);
+            mPriorityView = (TextView) v.findViewById(R.id.priority);
 
         }
     }
@@ -75,8 +71,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         final Task task = myTasks.get(position);
-        holder.mTextView.setText(task.getName());
-        holder.mTextView.setOnClickListener(new View.OnClickListener() {
+        holder.mNameView.setText(task.getName());
+        holder.mPriorityView.setText(task.getPriority().name());
+
+        holder.mNameView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(myContext, EditActivity.class);
@@ -85,7 +83,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                 ((Activity) myContext).startActivityForResult(i, EDIT_TASK_REQUEST);
             }
         });
-        holder.mTextView.setOnLongClickListener(new View.OnLongClickListener() {
+        holder.mNameView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(myContext);

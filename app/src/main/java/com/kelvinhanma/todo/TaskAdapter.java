@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +74,14 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         final Task task = myTasks.get(position);
         holder.mNameView.setText(task.getName());
         holder.mPriorityView.setText(task.getPriority().name());
+        switch(task.getPriority()) {
+            case HIGH:
+                holder.mPriorityView.setTextColor(Color.RED);
+                break;
+            case LOW:
+                holder.mPriorityView.setTextColor(Color.GRAY);
+                break;
+        }
 
         holder.mNameView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +95,11 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
         holder.mNameView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                showDeleteConfirmDialog();
+                return true;
+            }
+
+            private void showDeleteConfirmDialog() {
                 AlertDialog.Builder builder = new AlertDialog.Builder(myContext);
                 builder.setMessage("Are you sure you want to delete task: " + task.getName())
                         .setTitle("Confirm Delete");
@@ -108,7 +122,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.ViewHolder> {
                     }
                 });
                 builder.create().show();
-                return true;
             }
         });
 
